@@ -15,8 +15,6 @@ class CliMode(str, Enum):
     """Specify CLI mode or what to inspect."""
 
     FILELIST = "filelist"
-    ALL_FILELISTS = "all_filelists"
-    ALL_FORMATTED_FILELISTS = "all_formatted_filelists"
     SOURCES_DIR = "sources_dir"
     SOURCES_VAR = "sources_var"
     ALL_SOURCES_VARS = "all_sources_vars"
@@ -57,10 +55,6 @@ def enter_package_cli(metainfo: PackageMetaInfo) -> None:
 
     if args.mode == CliMode.FILELIST:
         print(metainfo.filelist)
-    elif args.mode == CliMode.ALL_FILELISTS:
-        print(" ".join([str(f) for f in metainfo.all_filelists]))
-    elif args.mode == CliMode.ALL_FORMATTED_FILELISTS:
-        print("-f " + " -f ".join([str(f) for f in metainfo.all_filelists]))
     elif args.mode == CliMode.SOURCES_DIR:
         print(metainfo.sources_dir)
     elif args.mode == CliMode.SOURCES_VAR:

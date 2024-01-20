@@ -25,13 +25,12 @@ class PackageMetaInfo:
     SOURCES_VAR_SUFFIX = "SOURCES_ROOT"
     FILELIST_NAME = "filelist.f"
 
-    def __init__(self, pypkg_name: str) -> None:
+    def __init__(self, py_pkg_name: str) -> None:
         """Init package meta-information."""
-        self.name: str = pypkg_name
+        self.name: str = py_pkg_name
 
         self._dependencies: Optional[List[PackageMetaInfo]] = None
         self._filelist: Optional[Path] = None
-        self._all_filelists: Optional[List[Path]] = None
         self._sources_dir: Optional[Path] = None
         self._sources_var: Optional[EnvVar] = None
         self._all_sources_vars: Optional[List[EnvVar]] = None
@@ -71,14 +70,6 @@ class PackageMetaInfo:
 
             self._filelist = pkg_filelist
         return self._filelist
-
-    @property
-    def all_filelists(self) -> List[Path]:
-        """Path to all EDA filelists, including dependencies first."""
-        if self._all_filelists is None:
-            self._all_filelists = [d.filelist for d in self.dependencies]
-            self._all_filelists.append(self.filelist)
-        return self._all_filelists
 
     @property
     def sources_dir(self) -> Path:
