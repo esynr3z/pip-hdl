@@ -1,0 +1,4 @@
+poetry
+poetry-dynamic-versioning[plugin]
+poethepoet[poetry_plugin]
+tox

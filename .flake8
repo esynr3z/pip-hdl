@@ -1,0 +1,27 @@
+[flake8]
+max-line-length = 120
+type-checking-strict = true
+enable-extensions = TC, TC1
+ban-relative-imports = true
+format-greedy = 1
+inline-quotes = double
+
+extend-ignore =
+    # ANN101: Missing type annotation for self in method
+    ANN101,
+    # ANN102: Missing type annotation for cls in classmethod
+    ANN102,
+    # TC001: Move application import into a type-checking block
+    TC001,
+    # TC002: Move third-party import into a type-checking block
+    TC002
+    # TC003: Move built-in import into a type-checking block
+    TC003
+
+per-file-ignores =
+    # ANN201: Missing return type annotation for public function
+    tests/test_*:ANN201
+
+exclude =
+    .venv
+    .tox

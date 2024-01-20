@@ -1,0 +1,44 @@
+name: Tests & Checks
+
+on:
+  pull_request:
+    branches:
+    - '**'
+  push:
+    branches:
+    - main
+
+env:
+  PY_COLORS: "1"
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+        - ubuntu-latest
+        - windows-latest
+        - macos-latest
+        python-version:
+        - '3.8'
+        - '3.9'
+        - '3.10'
+        - '3.11'
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install prerequisites
+      run: |
+        python -m pip install -r requirements-dev.txt --disable-pip-version-check
+    - name: Check format
+      run: tox -e format
+    - name: Lint
+      run: tox -e lint
+    - name: Check types
+      run: tox -e type
+    - name: Run tests
+      run: tox -e py

@@ -1,0 +1,89 @@
+[tool.poetry]
+name = "template_python_project"
+version = "0.1.0"
+description = "project_description"
+authors = ["johnsmith <johnsmith@mail.com>"]
+license = "MIT"
+readme = "README.md"
+repository = "https://github.com/johnsmith/template-python-project"
+
+[tool.poetry.dependencies]
+python = "^3.8.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.2.2"
+black = "^23.1.0"
+flake8 = "^6.0.0"
+pytest-cov = "^4.0.0"
+isort = "^5.12.0"
+flake8-annotations = "^3.0.0"
+mypy = "^1.1.1"
+tox = "^4.4.7"
+types-setuptools = "^67.6.0"
+flake8-type-checking = "^2.3.1"
+
+[tool.poetry.group.dev.dependencies]
+types-pyyaml = "^6.0.12.10"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+style = "semver"
+vcs = "git"
+
+[tool.poetry-dynamic-versioning.substitution]
+files = ["template_python_project/version.py"]
+
+[tool.poe.tasks]
+_black = "black ."
+_isort = "isort format ."
+_black_check = "black --check --diff --color ."
+_isort_check = "isort --check --diff --color ."
+
+[tool.poe.tasks.clean]
+help = "Clean project directory from temporary files and folders"
+cmd  = "rm -rf .tox .venv .mypy_cache .pytest_cache **/__pycache__ dist"
+
+[tool.poe.tasks.test]
+help = "Run all tests"
+cmd  = "pytest -v"
+
+[tool.poe.tasks.test-cov]
+help = "Run all tests with coverage collection"
+cmd  = "pytest -v --cov=template_python_project --no-cov-on-fail --cov-report term-missing"
+
+[tool.poe.tasks.lint]
+help = "Invoke linting checks"
+cmd  = "flake8 --docstring-convention google"
+
+[tool.poe.tasks.type]
+help = "Invoke typing checks"
+cmd  = "mypy -p template_python_project -p tests"
+
+[tool.poe.tasks.format]
+help = "Format all Python files"
+sequence = ['_black', '_isort']
+ignore_fail = 'return_non_zero'
+
+[tool.poe.tasks.check-format]
+help = "Check Python formatting"
+sequence = ["_black_check", "_isort_check"]
+ignore_fail = 'return_non_zero'
+
+[tool.poe.tasks.pre-commit]
+help = "Pre-commit routine to ensure code quality"
+sequence = ["check-format", "lint", "type", "test"]
+ignore_fail = 'return_non_zero'
+
+[tool.black]
+line-length = 120
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.isort]
+profile = "black"
+line_length = 120
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry_dynamic_versioning.backend"
