@@ -1,7 +1,6 @@
-# template_python_project
+# pip-hdl
 
-[![Tests & Checks](https://github.com/johnsmith/template-python-project/actions/workflows/test.yml/badge.svg)](https://github.com/johnsmith/template-python-project/actions/workflows/test.yml)
-[![PyPI version](https://badge.fury.io/py/template_python_project.svg)](https://badge.fury.io/py/template_python_project)
+[![Tests & Checks](https://github.com/esynr3z/pip-hdl/actions/workflows/test.yml/badge.svg)](https://github.com/esynr3z/pip-hdl/actions/workflows/test.yml)
+[![PyPI version](https://badge.fury.io/py/pip-hdl.svg)](https://badge.fury.io/py/pip-hdl)
 
-Template repository for a new Python project.
-Execute `./run_and_remove.py` and follow instructions.
+Bring power of PIP to HDL world.
