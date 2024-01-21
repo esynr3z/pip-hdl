@@ -61,7 +61,7 @@ class PackageMetaInfo:
         if self._filelist is None:
             pkg_loader = pkgutil.get_loader(self.name)
             if pkg_loader is None:
-                raise FileNotFoundError(f"Can't find package '{self.name}'. It has to be installed.")
+                raise ModuleNotFoundError(f"Can't find package '{self.name}'. It has to be installed.")
 
             pkg_root = Path(pkg_loader.get_filename()).parent  # type: ignore
             pkg_filelist = pkg_root / self.FILELIST_NAME
