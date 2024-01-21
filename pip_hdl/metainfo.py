@@ -21,7 +21,6 @@ class PackageMetaInfo:
     """HDL package meta information."""
 
     # All the HDL packages has to follow this conventions
-    HDL_PKG_PREFIX = "hdlp"
     SOURCES_VAR_SUFFIX = "SOURCES_ROOT"
     FILELIST_NAME = "filelist.f"
 
@@ -39,7 +38,7 @@ class PackageMetaInfo:
     def dependencies(self) -> List[PackageMetaInfo]:
         """Dependencies of the current package.
 
-        Dependencies search is based on the common prefix.
+        Dependencies search is based on the presense of filelist.
         """
         if self._dependencies is None:
             self._dependencies = []
@@ -48,8 +47,12 @@ class PackageMetaInfo:
             if required_packages is not None:
                 for spec in required_packages:
                     req = Requirement(spec)
-                    if req.name.startswith(f"{self.HDL_PKG_PREFIX}_"):
-                        self._dependencies.append(PackageMetaInfo(req.name))
+                    req_metainfo = PackageMetaInfo(req.name)
+                    try:
+                        req_metainfo.filelist
+                        self._dependencies.append(req_metainfo)
+                    except FileNotFoundError:
+                        pass
         return self._dependencies
 
     @property

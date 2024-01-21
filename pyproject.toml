@@ -7,6 +7,9 @@ license = "MIT"
 readme = "README.md"
 repository = "https://github.com/esynr3z/pip-hdl"
 
+[tool.poetry.scripts]
+pip-hdl = "pip_hdl.cli:enter_cli"
+
 [tool.poetry.dependencies]
 python = "^3.8.1"
 
