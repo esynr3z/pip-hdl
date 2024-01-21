@@ -6,19 +6,20 @@ This CLI helps to inspect metainformation details without extra Python code.
 import argparse
 import sys
 from enum import Enum
+from pathlib import Path
 from typing import Any, Sequence
 
-from .version import __version__
 from .metainfo import PackageMetaInfo
+from .version import __version__
 
 
-class CliCommands(str, Enum):
+class _CliCommands(str, Enum):
     """CLI command to invoke."""
 
     INSPECT = "inspect"
 
 
-class CliInspectTarget(str, Enum):
+class _CliInspectTarget(str, Enum):
     """Specify target for inspect operation."""
 
     FILELIST = "filelist"
@@ -30,7 +31,7 @@ class CliInspectTarget(str, Enum):
     ALL_SOURCES_VARS = "all_sources_vars"
 
 
-class ArgumentParser(argparse.ArgumentParser):
+class _ArgumentParser(argparse.ArgumentParser):
     """CLI argument parser."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
@@ -75,16 +76,16 @@ avaliable attributes for requirements.txt inspection:
         subparser.add_argument(
             metavar="OBJ",
             type=str,
-            dest="object",
-            help=f"object for inspection: name of pip-hdl-powered package or requirements.txt with such packages",
+            dest="obj",
+            help="object for inspection: name of pip-hdl-powered package or requirements.txt with such packages",
         )
 
         subparser.add_argument(
             metavar="ATTR",
-            type=CliInspectTarget,
-            choices=[e.value for e in CliInspectTarget],
+            type=_CliInspectTarget,
+            choices=[e.value for e in _CliInspectTarget],
             dest="attr",
-            help=f"attribute to inspect (list of available attributes is above)",
+            help="attribute to inspect (list of available attributes is above)",
         )
 
     def parse_args(  # type: ignore
@@ -98,28 +99,33 @@ avaliable attributes for requirements.txt inspection:
             sys.argv.append("--help")
 
         ns = super().parse_args(args, namespace)
-        ns.cmd = CliCommands(ns.cmd)  # cast to enum
+        ns.cmd = _CliCommands(ns.cmd)  # cast to enum
 
         return ns
 
 
 def enter_cli() -> None:
-    """Enter CLI application."""
-    parser = ArgumentParser(prog="pip-hdl")
+    """Enter CLI of application."""
+    parser = _ArgumentParser(prog="pip-hdl")
     parser.configure()
     args = parser.parse_args()
 
+    if args.cmd == _CliCommands.INSPECT:
+        _do_inspect(obj=args.obj, attr=args.attr)
 
-"""
-    if args.mode == CliMode.FILELIST:
-        print(metainfo.filelist)
-    elif args.mode == CliMode.SOURCES_DIR:
-        print(metainfo.sources_dir)
-    elif args.mode == CliMode.SOURCES_VAR:
-        var = metainfo.sources_var
-        print(f"{var.name}={var.value}")
-    elif args.mode == CliMode.ALL_SOURCES_VARS:
-        print(" ".join([f"{var.name}={var.value}" for var in metainfo.all_sources_vars]))
+
+def _do_inspect(obj: str, attr: _CliInspectTarget) -> None:
+    """Do `inspect` command."""
+    if Path(obj).exists():
+        raise NotImplementedError("Handler for file with requirements is not implemented yet")
     else:
-        raise RuntimeError("Unknown mode!")
-"""
+        metainfo = PackageMetaInfo(obj)
+        if attr == _CliInspectTarget.FILELIST:
+            print(metainfo.filelist)
+        elif attr == _CliInspectTarget.SOURCES_DIR:
+            print(metainfo.sources_dir)
+        elif attr == _CliInspectTarget.SOURCES_VAR:
+            var = metainfo.sources_var
+            print(f"{var.name}={var.value}")
+        else:
+            raise ValueError(f"Attribute '{attr.value}' is not supported for package inspection!")
