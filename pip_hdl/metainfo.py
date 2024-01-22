@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import pkgutil
-from importlib import metadata
+from importlib import metadata, import_module
 from pathlib import Path
 from typing import List, NamedTuple, Optional
 
@@ -38,7 +38,7 @@ class PackageMetaInfo:
     def dependencies(self) -> List[PackageMetaInfo]:
         """Dependencies of the current package.
 
-        Dependencies search is based on the presense of filelist.
+        Dependency search is based on the presense of `metainfo` attribute within top-module.
         """
         if self._dependencies is None:
             self._dependencies = []
@@ -46,12 +46,11 @@ class PackageMetaInfo:
             required_packages = metadata.requires(self.name)
             if required_packages is not None:
                 for spec in required_packages:
-                    req = Requirement(spec)
-                    req_metainfo = PackageMetaInfo(req.name)
                     try:
-                        req_metainfo.filelist
-                        self._dependencies.append(req_metainfo)
-                    except FileNotFoundError:
+                        module = import_module(Requirement(spec).name)
+                        if isinstance(module.metainfo, PackageMetaInfo):
+                            self._dependencies.append(module.metainfo)
+                    except (ImportError, AttributeError) as _:
                         pass
         return self._dependencies
 
