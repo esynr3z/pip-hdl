@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import pkgutil
-from importlib import metadata, import_module
+from importlib import import_module, metadata
 from pathlib import Path
+from types import ModuleType
 from typing import List, NamedTuple, Optional
 
 from packaging.requirements import Requirement
@@ -15,6 +16,14 @@ class EnvVar(NamedTuple):
 
     name: str
     value: str
+
+
+class PackageDependency(NamedTuple):
+    """Descriptor for a HDL package dependency."""
+
+    spec: str  # packaging.requirements.Requirement friendly specification
+    module: ModuleType
+    metainfo: PackageMetaInfo
 
 
 class PackageMetaInfo:
@@ -28,14 +37,14 @@ class PackageMetaInfo:
         """Init package meta-information."""
         self.name: str = py_pkg_name
 
-        self._dependencies: Optional[List[PackageMetaInfo]] = None
+        self._dependencies: Optional[List[PackageDependency]] = None
         self._filelist: Optional[Path] = None
         self._sources_dir: Optional[Path] = None
         self._sources_var: Optional[EnvVar] = None
         self._all_sources_vars: Optional[List[EnvVar]] = None
 
     @property
-    def dependencies(self) -> List[PackageMetaInfo]:
+    def dependencies(self) -> List[PackageDependency]:
         """Dependencies of the current package.
 
         Dependency search is based on the presense of `metainfo` attribute within top-module.
@@ -49,8 +58,9 @@ class PackageMetaInfo:
                     try:
                         module = import_module(Requirement(spec).name)
                         if isinstance(module.metainfo, PackageMetaInfo):
-                            self._dependencies.append(module.metainfo)
-                    except (ImportError, AttributeError) as _:
+                            dependency = PackageDependency(spec=spec, module=module, metainfo=module.metainfo)
+                            self._dependencies.append(dependency)
+                    except (ImportError, AttributeError) as _:  # noqa
                         pass
         return self._dependencies
 
@@ -94,6 +104,6 @@ class PackageMetaInfo:
         if self._all_sources_vars is None:
             self._all_sources_vars = []
             for d in self.dependencies:
-                self._all_sources_vars.extend(d.all_sources_vars)
+                self._all_sources_vars.extend(d.metainfo.all_sources_vars)
             self._all_sources_vars.append(self.sources_var)
         return self._all_sources_vars

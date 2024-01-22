@@ -43,7 +43,7 @@ class DependencyGraph:
 
         # link nodes
         for node in self.nodes.values():
-            node.add_upstreams([self.nodes[d.name] for d in node.metainfo.dependencies])
+            node.add_upstreams([self.nodes[d.metainfo.name] for d in node.metainfo.dependencies])
 
     def __iter__(self) -> Iterator[Node]:
         """Iterate through nodes in dependency-aware order."""
@@ -85,7 +85,7 @@ class DependencyGraph:
         """Convert packages and all their dependencies to graph nodes recursivelly."""
         for pkg in packages:
             yield Node(pkg)
-            yield from self._packages_to_nodes(pkg.dependencies)
+            yield from self._packages_to_nodes([d.metainfo for d in pkg.dependencies])
 
     def render_dag(self, **kwargs: Any) -> Path:
         """Represent current graph as directed acyclic graph using 'graphviz'.
