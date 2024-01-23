@@ -102,8 +102,3 @@ class DependencyGraph:
                 graph.edge(node.id, downstream.id)
 
         return Path(graph.render(**kwargs))
-
-
-def requirements_txt_to_graph(req_txt: Path) -> DependencyGraph:
-    """Parse `requirements.txt` and form a graph with all dependencies."""
-    raise NotImplementedError

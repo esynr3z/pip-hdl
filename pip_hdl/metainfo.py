@@ -97,13 +97,3 @@ class PackageMetaInfo:
         if self._sources_var is None:
             self._sources_var = EnvVar(f"{self.name.upper()}_{self.SOURCES_VAR_SUFFIX}", str(self.sources_dir))
         return self._sources_var
-
-    @property
-    def all_sources_vars(self) -> List[EnvVar]:
-        """Environment variables for all sources, including dependencies first."""
-        if self._all_sources_vars is None:
-            self._all_sources_vars = []
-            for d in self.dependencies:
-                self._all_sources_vars.extend(d.metainfo.all_sources_vars)
-            self._all_sources_vars.append(self.sources_var)
-        return self._all_sources_vars
