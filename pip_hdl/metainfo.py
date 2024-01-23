@@ -22,7 +22,7 @@ class PackageDependency(NamedTuple):
     """Descriptor for a HDL package dependency."""
 
     spec: str  # packaging.requirements.Requirement friendly specification
-    module: ModuleType
+    module: Optional[ModuleType]
     metainfo: PackageMetaInfo
 
 

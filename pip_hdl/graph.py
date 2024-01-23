@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from collections import deque
 from pathlib import Path
-from typing import Any, Deque, Iterable, Iterator, List, Set
+from typing import Any, Deque, Iterable, Iterator, List, Sequence, Set
 
 from .metainfo import PackageMetaInfo
 
@@ -36,7 +36,7 @@ class Node:
 class DependencyGraph:
     """Directed Acyclic Graph to operate with package dependecies conveniently."""
 
-    def __init__(self, packages: List[PackageMetaInfo]) -> None:
+    def __init__(self, packages: Sequence[PackageMetaInfo]) -> None:
         """Create dependecy DAG from provided packages."""
         # create nodes
         self.nodes = {n.id: n for n in self._packages_to_nodes(packages)}
@@ -69,7 +69,7 @@ class DependencyGraph:
 
             if node in visited:
                 continue
-            if set(node.downstreams).intersection(set(planned)):
+            if set(node.upstreams).intersection(set(planned)):
                 # dependencies are not resolved yet, plan the job again
                 planned.append(node)
                 continue
