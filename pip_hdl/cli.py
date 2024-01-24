@@ -47,7 +47,7 @@ class _ArgumentParser(argparse.ArgumentParser):
         """Configure parser with arguments, subparsers, etc."""
         self.description = """
 avaliable commands:
-    inspect     - inspect meta-information of the provided object
+    inspect - inspect meta-information of the provided package or requirements.txt
 
 add -h/--help argument to any command to get more information and specific arguments"""
 
