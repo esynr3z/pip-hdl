@@ -1,7 +1,4 @@
-"""pip-hdl command line interface.
-
-This CLI helps to inspect metainformation details without extra Python code.
-"""
+"""pip-hdl command line helper utility."""
 
 import argparse
 import sys
@@ -22,7 +19,7 @@ class _CliCommands(str, Enum):
     INSPECT = "inspect"
 
 
-class _CliInspectTarget(str, Enum):
+class _CliInspectCmd(str, Enum):
     """Specify target for inspect operation."""
 
     FILELIST = "filelist"
@@ -85,8 +82,8 @@ avaliable attributes for inspection:
 
         subparser.add_argument(
             metavar="ATTR",
-            type=_CliInspectTarget,
-            choices=[e.value for e in _CliInspectTarget],
+            type=_CliInspectCmd,
+            choices=[e.value for e in _CliInspectCmd],
             dest="attr",
             help="attribute to inspect (list of available attributes is above)",
         )
@@ -117,7 +114,7 @@ def enter_cli() -> None:
         _do_inspect(obj=args.obj, attr=args.attr)
 
 
-def _do_inspect(obj: str, attr: _CliInspectTarget) -> None:
+def _do_inspect(obj: str, attr: _CliInspectCmd) -> None:
     """Do `inspect` command."""
     if Path(obj).exists():
         with Path(obj).open("r") as f:
@@ -126,22 +123,22 @@ def _do_inspect(obj: str, attr: _CliInspectTarget) -> None:
         packages = [PackageMetaInfo(obj)]
     graph = DependencyGraph(packages)
 
-    if attr == _CliInspectTarget.FILELIST:
+    if attr == _CliInspectCmd.FILELIST:
         print(packages[0].filelist)
-    elif attr == _CliInspectTarget.SOURCES_ROOT:
+    elif attr == _CliInspectCmd.SOURCES_ROOT:
         print(packages[0].sources_root)
-    elif attr == _CliInspectTarget.SOURCES_VAR:
+    elif attr == _CliInspectCmd.SOURCES_VAR:
         var = packages[0].sources_var
         print(f"{var.name}={var.value}")
-    elif attr == _CliInspectTarget.ALL_FILELISTS:
+    elif attr == _CliInspectCmd.ALL_FILELISTS:
         print(" ".join([str(p.metainfo.filelist) for p in graph]))
-    elif attr == _CliInspectTarget.ALL_FILELISTS_AS_ARGS:
+    elif attr == _CliInspectCmd.ALL_FILELISTS_AS_ARGS:
         print("-f " + " -f ".join([str(p.metainfo.filelist) for p in graph]))
-    elif attr == _CliInspectTarget.ALL_SOURCES_ROOTS:
+    elif attr == _CliInspectCmd.ALL_SOURCES_ROOTS:
         print(" ".join([str(p.metainfo.sources_root) for p in graph]))
-    elif attr == _CliInspectTarget.ALL_SOURCES_VARS:
+    elif attr == _CliInspectCmd.ALL_SOURCES_VARS:
         print(" ".join([f"{p.metainfo.sources_var.name}={p.metainfo.sources_var.value}" for p in graph]))
-    elif attr == _CliInspectTarget.DEPENDENCY_GRAPH:
+    elif attr == _CliInspectCmd.DEPENDENCY_GRAPH:
         result = graph.render(cleanup=True, format="png", outfile=f"{Path(obj).stem}_graph.png")
         print(result.resolve())
     else:

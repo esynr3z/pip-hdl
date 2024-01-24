@@ -12,21 +12,21 @@ from typing import Any, Deque, Iterable, Iterator, List, Sequence, Set
 from .metainfo import PackageMetaInfo
 
 
-class Node:
+class GraphNode:
     """Graph node, which represents a package."""
 
     def __init__(self, metainfo: PackageMetaInfo) -> None:
         """Init node."""
         self.metainfo: PackageMetaInfo = metainfo
-        self.upstreams: Set[Node] = set()  # aka requirements aka parents aka dependencies
-        self.downstreams: Set[Node] = set()  # aka consumers ake childs aka dependants
+        self.upstreams: Set[GraphNode] = set()  # aka requirements aka parents aka dependencies
+        self.downstreams: Set[GraphNode] = set()  # aka consumers ake childs aka dependants
 
     @property
     def id(self) -> str:
         """Node identifier."""
         return self.metainfo.name
 
-    def add_upstreams(self, nodes: Iterable[Node]) -> None:
+    def add_upstreams(self, nodes: Iterable[GraphNode]) -> None:
         """Link node with dependencies. Backlinks are created as well."""
         for node in nodes:
             self.upstreams.add(node)
@@ -45,7 +45,7 @@ class DependencyGraph:
         for node in self.nodes.values():
             node.add_upstreams([self.nodes[d.metainfo.name] for d in node.metainfo.dependencies])
 
-    def __iter__(self) -> Iterator[Node]:
+    def __iter__(self) -> Iterator[GraphNode]:
         """Iterate through nodes in dependency-aware order."""
         # need to start from "roots" - nodes without dependecies
         initial_nodes = [node for node in self.nodes.values() if len(node.upstreams) == 0]
@@ -55,14 +55,14 @@ class DependencyGraph:
 
         yield from self._traverse_from(initial_nodes)
 
-    def _traverse_from(self, nodes: Iterable[Node]) -> Iterator[Node]:
+    def _traverse_from(self, nodes: Iterable[GraphNode]) -> Iterator[GraphNode]:
         """Traverse through a DAG starting from provided `nodes` and visiting all their downstreams.
 
         Nodes are yielded in a dependency-aware manner - node is yielded only if it's dependencies were already yielded.
         Non-recursive BFS-like algorithm is used here.
         """
-        visited: List[Node] = []
-        planned: Deque[Node] = deque(nodes)
+        visited: List[GraphNode] = []
+        planned: Deque[GraphNode] = deque(nodes)
 
         while len(planned):
             node = planned.popleft()
@@ -81,10 +81,10 @@ class DependencyGraph:
             for downstream in node.downstreams:
                 planned.append(downstream)
 
-    def _packages_to_nodes(self, packages: Iterable[PackageMetaInfo]) -> Iterator[Node]:
+    def _packages_to_nodes(self, packages: Iterable[PackageMetaInfo]) -> Iterator[GraphNode]:
         """Convert packages and all their dependencies to graph nodes recursivelly."""
         for pkg in packages:
-            yield Node(pkg)
+            yield GraphNode(pkg)
             yield from self._packages_to_nodes([d.metainfo for d in pkg.dependencies])
 
     def render(self, **kwargs: Any) -> Path:
