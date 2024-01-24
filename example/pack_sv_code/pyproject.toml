@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "dummy-math-lib"
+version = "0.1.0"
+description = "Example for pip-hdl: dummy math library"
+authors = ["esynr3z <esynr3z@gmail.com>"]
+classifiers = [
+    "Private :: Do not Upload", # Prevent uploading to PyPI
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pip_hdl = "^0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

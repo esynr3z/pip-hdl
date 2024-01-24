@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "fizzbuzz-agent"
+version = "0.1.0"
+description = "Example for pip-hdl: agent to create fizz-buzz sequence"
+authors = ["esynr3z <esynr3z@gmail.com>"]
+classifiers = [
+    "Private :: Do not Upload",  # Prevent uploading to PyPI
+]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pip_hdl = "^0.1"
+dummy_math_lib = "^0.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
