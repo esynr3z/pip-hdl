@@ -26,11 +26,11 @@ class _CliInspectTarget(str, Enum):
     """Specify target for inspect operation."""
 
     FILELIST = "filelist"
-    SOURCES_DIR = "sources_dir"
+    SOURCES_ROOT = "sources_root"
     SOURCES_VAR = "sources_var"
     ALL_FILELISTS = "all_filelists"
     ALL_FILELISTS_AS_ARGS = "all_filelists_as_args"
-    ALL_SOURCES_DIRS = "all_sources_dirs"
+    ALL_SOURCES_ROOTS = "all_sources_roots"
     ALL_SOURCES_VARS = "all_sources_vars"
 
 
@@ -67,11 +67,11 @@ add -h/--help argument to any command to get more information and specific argum
         subparser.description = """
 avaliable attributes for inspection:
     filelist              - show absolute path to filelist
-    sources_dir           - show absolute path to sources root
+    sources_root          - show absolute path to sources root
     sources_var           - show environment variable to setup sources root (in NAME=VAL format)
     all_filelists         - show all filelists in the dependency-resolved order
     all_filelists_as_args - show all filelists as above, but format them as EDA arguments (with -f)
-    all_sources_dirs      - show absolute paths to all sources directories
+    all_sources_roots     - show absolute paths to all sources directories
     all_sources_vars      - show all environment variables for all sources
 """
         subparser.add_argument(
@@ -126,8 +126,8 @@ def _do_inspect(obj: str, attr: _CliInspectTarget) -> None:
 
     if attr == _CliInspectTarget.FILELIST:
         print(packages[0].filelist)
-    elif attr == _CliInspectTarget.SOURCES_DIR:
-        print(packages[0].sources_dir)
+    elif attr == _CliInspectTarget.SOURCES_ROOT:
+        print(packages[0].sources_root)
     elif attr == _CliInspectTarget.SOURCES_VAR:
         var = packages[0].sources_var
         print(f"{var.name}={var.value}")
@@ -135,8 +135,8 @@ def _do_inspect(obj: str, attr: _CliInspectTarget) -> None:
         print(" ".join([str(p.metainfo.filelist) for p in graph]))
     elif attr == _CliInspectTarget.ALL_FILELISTS_AS_ARGS:
         print("-f " + " -f ".join([str(p.metainfo.filelist) for p in graph]))
-    elif attr == _CliInspectTarget.ALL_SOURCES_DIRS:
-        print(" ".join([str(p.metainfo.sources_dir) for p in graph]))
+    elif attr == _CliInspectTarget.ALL_SOURCES_ROOTS:
+        print(" ".join([str(p.metainfo.sources_root) for p in graph]))
     elif attr == _CliInspectTarget.ALL_SOURCES_VARS:
         print(" ".join([f"{p.metainfo.sources_var.name}={p.metainfo.sources_var.value}" for p in graph]))
     else:

@@ -39,7 +39,7 @@ class PackageMetaInfo:
 
         self._dependencies: Optional[List[PackageDependency]] = None
         self._filelist: Optional[Path] = None
-        self._sources_dir: Optional[Path] = None
+        self._sources_root: Optional[Path] = None
         self._sources_var: Optional[EnvVar] = None
         self._all_sources_vars: Optional[List[EnvVar]] = None
 
@@ -85,15 +85,15 @@ class PackageMetaInfo:
         return self._filelist
 
     @property
-    def sources_dir(self) -> Path:
+    def sources_root(self) -> Path:
         """Path to a directory with HDL sources."""
-        if self._sources_dir is None:
-            self._sources_dir = self.filelist.parent
-        return self._sources_dir
+        if self._sources_root is None:
+            self._sources_root = self.filelist.parent
+        return self._sources_root
 
     @property
     def sources_var(self) -> EnvVar:
         """Environment variable for directory with sources."""
         if self._sources_var is None:
-            self._sources_var = EnvVar(f"{self.name.upper()}_{self.SOURCES_VAR_SUFFIX}", str(self.sources_dir))
+            self._sources_var = EnvVar(f"{self.name.upper()}_{self.SOURCES_VAR_SUFFIX}", str(self.sources_root))
         return self._sources_var
