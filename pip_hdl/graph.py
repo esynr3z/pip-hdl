@@ -87,18 +87,22 @@ class DependencyGraph:
             yield Node(pkg)
             yield from self._packages_to_nodes([d.metainfo for d in pkg.dependencies])
 
-    def render_dag(self, **kwargs: Any) -> Path:
-        """Represent current graph as directed acyclic graph using 'graphviz'.
+    def render(self, **kwargs: Any) -> Path:
+        """Render current graph using `graphviz`.
 
         Arguments are the same as in 'graphviz.Digraph.render()'.
-        May raise 'ModuleNotFoundError' if 'graphviz' is not installed.
         """
+        # This minor feature requires rendering engine presence in a system, which might be not the case.
+        # So do lazy import here only if rendering actually requested.
         import graphviz
 
-        graph = graphviz.Digraph("Package Graph", graph_attr={"rankdir": "LR"})
+        graph = graphviz.Digraph("graph", graph_attr={"rankdir": "RL"})
 
         for node in self.nodes.values():
-            for downstream in node.downstreams:
-                graph.edge(node.id, downstream.id)
+            if len(node.upstreams) == 0:
+                graph.node(node.id)
+            else:
+                for upstream in node.upstreams:
+                    graph.edge(node.id, upstream.id)
 
         return Path(graph.render(**kwargs))

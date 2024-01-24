@@ -32,6 +32,7 @@ class _CliInspectTarget(str, Enum):
     ALL_FILELISTS_AS_ARGS = "all_filelists_as_args"
     ALL_SOURCES_ROOTS = "all_sources_roots"
     ALL_SOURCES_VARS = "all_sources_vars"
+    DEPENDENCY_GRAPH = "dependency_graph"
 
 
 class _ArgumentParser(argparse.ArgumentParser):
@@ -73,6 +74,7 @@ avaliable attributes for inspection:
     all_filelists_as_args - show all filelists as above, but format them as EDA arguments (with -f)
     all_sources_roots     - show absolute paths to all sources directories
     all_sources_vars      - show all environment variables for all sources
+    dependency_graph      - dump dependency graph as in image (graphviz required)
 """
         subparser.add_argument(
             metavar="OBJ",
@@ -139,5 +141,8 @@ def _do_inspect(obj: str, attr: _CliInspectTarget) -> None:
         print(" ".join([str(p.metainfo.sources_root) for p in graph]))
     elif attr == _CliInspectTarget.ALL_SOURCES_VARS:
         print(" ".join([f"{p.metainfo.sources_var.name}={p.metainfo.sources_var.value}" for p in graph]))
+    elif attr == _CliInspectTarget.DEPENDENCY_GRAPH:
+        result = graph.render(cleanup=True, format="png", outfile=f"{Path(obj).stem}_graph.png")
+        print(result.resolve())
     else:
         raise ValueError(f"Attribute '{attr.value}' is not supported yet!")
