@@ -7,7 +7,7 @@ import argparse
 import sys
 from enum import Enum
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Optional, Sequence
 
 from packaging.requirements import Requirement
 
@@ -93,7 +93,7 @@ avaliable attributes for inspection:
 
     def parse_args(  # type: ignore
         self,
-        args: Sequence[str] | None = None,
+        args: Optional[Sequence[str]] = None,
         namespace: None = None,
     ) -> argparse.Namespace:
         """Parse CLI arguments."""
