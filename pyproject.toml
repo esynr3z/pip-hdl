@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "pip-hdl"
 version = "0.2.0"
-description = "Tool to enable package managing for HDL (Verilog, SystemVerilog, VHDL) via PIP"
+description = "Tool to enable package managing for HDL VIP or IP cores (Verilog, SystemVerilog, VHDL) using Python pip"
 authors = ["esynr3z <esynr3z@gmail.com>"]
 license = "MIT"
 readme = "README.md"
