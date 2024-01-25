@@ -4,7 +4,7 @@ module tb;
   initial begin
     fizzbuzz_agent agent = new();
 
-    agent.run_sequence(100);
+    void'(agent.run_sequence(100));
     $finish();
   end
 endmodule

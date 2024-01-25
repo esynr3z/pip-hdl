@@ -1,4 +1,4 @@
-package hdlp_fizzbuzz_agent_pkg;
+package fizzbuzz_agent_pkg;
     import dummy_math_lib_pkg::is_divisible_by_3;
     import dummy_math_lib_pkg::is_divisible_by_5;
 
