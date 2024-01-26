@@ -10,12 +10,14 @@ from packaging.requirements import Requirement
 
 from .graph import DependencyGraph
 from .metainfo import PackageMetaInfo
+from .template import ask_user_for_config, template_package_example
 from .version import __version__
 
 
 class _CliCommands(str, Enum):
     """CLI command to invoke."""
 
+    NEW = "new"
     INSPECT = "inspect"
 
 
@@ -45,6 +47,7 @@ class _ArgumentParser(argparse.ArgumentParser):
         """Configure parser with arguments, subparsers, etc."""
         self.description = """
 avaliable commands:
+    new     - interactively create a new package
     inspect - inspect meta-information of the provided package or requirements.txt
 
 add -h/--help argument to any command to get more information and specific arguments"""
@@ -59,6 +62,22 @@ add -h/--help argument to any command to get more information and specific argum
         subparsers = self.add_subparsers(help="cli command", dest="cmd", required=True)
         inspect_subparser = subparsers.add_parser("inspect")
         self._configure_inspect_subparser(inspect_subparser)
+        new_subparser = subparsers.add_parser("new")
+        self._configure_new_subparser(new_subparser)
+
+    def _configure_new_subparser(self, subparser: argparse.ArgumentParser) -> None:
+        """Configure subparser for `new` command."""
+        subparser.description = """
+follow interactive instructions to create a new package project
+"""
+        subparser.add_argument(
+            metavar="OUTDIR",
+            type=Path,
+            dest="outdir",
+            default=Path("."),
+            nargs="?",
+            help="output dir to create a new package project inside",
+        )
 
     def _configure_inspect_subparser(self, subparser: argparse.ArgumentParser) -> None:
         """Configure subparser for `inspect` command."""
@@ -112,6 +131,10 @@ def enter_cli() -> None:
 
     if args.cmd == _CliCommands.INSPECT:
         _do_inspect(obj=args.obj, attr=args.attr)
+    elif args.cmd == _CliCommands.NEW:
+        _do_new(outdir=args.outdir)
+    else:
+        raise ValueError(f"Unsupported command '{args.cmd}'")
 
 
 def _do_inspect(obj: str, attr: _CliInspectCmd) -> None:
@@ -143,3 +166,8 @@ def _do_inspect(obj: str, attr: _CliInspectCmd) -> None:
         print(result.resolve())
     else:
         raise ValueError(f"Attribute '{attr.value}' is not supported yet!")
+
+
+def _do_new(outdir: Path) -> None:
+    """Do `new` command."""
+    template_package_example(outdir=outdir, cfg=ask_user_for_config())
