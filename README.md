@@ -7,6 +7,8 @@ Most modern programming languages provide package managers to facilitate code re
 
 `pip-hdl` enables package managing for HDL (e.g. SystemVerilog) VIP or IP cores using Python [pip](https://pip.pypa.io/en/stable/). `pip` is simple and friendly, it allows to create quite lightweight packages, which are easy to publish to [PyPi](https://pypi.org/) or your local index, and install.
 
+*DICLAIMER: this project has not used in production or tested properly yet, it is better described as Proof-of-Concept at this point.*
+
 ## How to install `pip-hdl`
 
 The simplest ways is just use pip as for any other Python package:
